@@ -23,7 +23,7 @@ The project is realised with Symfony 5.2, PHP 8.0, api-platform and Docker
 
 ## Usage
 1. You can go to https://localhost/api (should accept initially the SSL certificate)
-2. Some urls are preloaded with fixtures, and you can see them by calling GET `api/urls`
+2. Some urls are preloaded with fixtures, and you can see them by calling GET `api/urls`. A DB reset and fixtures will be applied on every container up and this is solely for demo purpose.
 3. The possibility for updating an url is disabled by requirements
 4. You can try https://localhost/todor or https://localhost/test for redirections
 5. You can get inside the php container with `docker exec -it tiny-url-api_php_1 sh`

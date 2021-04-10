@@ -57,7 +57,8 @@ if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
 	fi
 
 	if [ "$APP_ENV" != 'prod' ]; then
-		bin/console hautelook:fixtures:load -n --no-bundles
+		bin/console dbal:run-sql -n "ALTER SEQUENCE url_id_seq RESTART WITH 1"
+		bin/console hautelook:fixtures:load -n --no-bundles --purge-with-truncate
 	fi
 
 	setfacl -R -m u:www-data:rwX -m u:"$(whoami)":rwX var

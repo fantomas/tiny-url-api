@@ -3,8 +3,10 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Controller\UrlRedirectController;
 use App\Repository\UrlRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource()
@@ -13,7 +15,21 @@ use Doctrine\ORM\Mapping as ORM;
  */
 #[ApiResource(
     collectionOperations: ['get', 'post'],
-    itemOperations: ['get', 'delete'],
+    itemOperations: [
+        'get',
+        'put',
+        'delete',
+        'get_url_visits' => [
+            'method' => 'GET',
+            'path' => '/urls/{id}/visits',
+            'controller' => UrlRedirectController::class,
+            'normalization_context' => [
+                'groups' => ['read_visits'],
+            ],
+        ],
+    ],
+    denormalizationContext: ['groups' => 'write'],
+    normalizationContext: ['groups' => 'read'],
 )]
 class Url
 {
@@ -22,22 +38,30 @@ class Url
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private int $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups ({"read", "write"})
      */
-    private $short_uri;
+    private string $short_uri;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"read", "write"})
      */
-    private $orig_url;
+    private string $orig_url;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read_visits"})
      */
-    private $visits;
+    private int|null $visits;
+
+    /**
+     * @ORM\Version @ORM\Column(type="integer")
+     */
+    private int $version;
 
     public function getId(): ?int
     {
@@ -73,10 +97,18 @@ class Url
         return $this->visits;
     }
 
-    public function setVisits(?int $visits): self
+    public function setVisits(int $visits): self
     {
         $this->visits = $visits;
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getVersion(): int
+    {
+        return $this->version;
     }
 }
