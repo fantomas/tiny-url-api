@@ -11,6 +11,10 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass=UrlRepository::class)
  * @ORM\Table(name="url", uniqueConstraints={@ORM\UniqueConstraint(name="short_uri_idx", columns={"short_uri"})})
  */
+#[ApiResource(
+    collectionOperations: ['get', 'post'],
+    itemOperations: ['get', 'delete'],
+)]
 class Url
 {
     /**

@@ -1,0 +1,10 @@
+App\Entity\Url:
+    url_1:
+        short_uri: todor
+        orig_url: https://todorgeorgiev.com/
+    url_2:
+        short_uri: test
+        orig_url: https://us.jobtome.com/
+    url_{3..20}:
+        short_uri: <word()>
+        orig_url: <url()>
