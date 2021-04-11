@@ -21,18 +21,14 @@ class UrlRedirectController extends AbstractController
         ]);
     }
 
-    #[NoReturn] #[Route('/{short_uri}', name: 'url_redirect', requirements: ['short_uri'=>'^((?!api).)*$'])]
-    public function redirect_url(string $short_uri, EntityManagerInterface $em): NoReturn
+    #[NoReturn] #[Route(path: '/{shortUri}', name: 'url_redirect', requirements: ['shortUri'=>'^((?!api).)*$'])]
+    public function redirect_url(string $shortUri, EntityManagerInterface $em): NoReturn
     {
-        /*$url = $this->getDoctrine()
-            ->getRepository(Url::class)
-            ->findOneBy(['short_uri' => $short_uri]);*/
-
-        $url = $em->getRepository(Url::class)->findOneBy(['short_uri' => $short_uri]);
+        $url = $em->getRepository(Url::class)->findOneBy(['shortUri' => $shortUri]);
 
         if (!$url) {
             throw $this->createNotFoundException(
-                'No url found for ' . $short_uri
+                'No url found for ' . $shortUri
             );
         }
 
@@ -50,19 +46,5 @@ class UrlRedirectController extends AbstractController
 
         header(sprintf("Location: %s", $url->getOrigUrl()));
         exit;
-    }
-
-    #[Route(
-        path: '/api/urls/{id}/visits',
-        name: 'url_get_visits',
-        defaults: [
-        '_api_resource_class' => Url::class,
-        '_api_item_operation_name' => 'get_url_visits',
-    ],
-        methods: ['GET'],
-    )]
-    public function url_visits(Url $data): Url
-    {
-        return $data;
     }
 }

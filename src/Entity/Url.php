@@ -7,6 +7,7 @@ use App\Controller\UrlRedirectController;
 use App\Repository\UrlRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource()
@@ -19,16 +20,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
         'get',
         'put',
         'delete',
-        'get_url_visits' => [
+        'url_get_visits' => [
             'method' => 'GET',
             'path' => '/urls/{id}/visits',
-            'controller' => UrlRedirectController::class,
             'normalization_context' => [
                 'groups' => ['read_visits'],
             ],
         ],
     ],
-    denormalizationContext: ['groups' => 'write'],
     normalizationContext: ['groups' => 'read'],
 )]
 class Url
@@ -41,22 +40,28 @@ class Url
     private int $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     * @Groups ({"read", "write"})
+     * @ORM\Column(type="string", length=50)
+     * @Groups ({"read"})
+     * @Assert\NotBlank
+     * @Assert\Regex("/^\w/")
+     * @Assert\Length(max = 50)
      */
-    private string $short_uri;
+    private string $shortUri;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read", "write"})
+     * @Groups({"read"})
+     * @Assert\NotBlank
+     * @Assert\Length(max = 255)
+     * @Assert\Url()
      */
-    private string $orig_url;
+    private string $origUrl;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read_visits"})
      */
-    private int|null $visits;
+    private int|null $visits = 0;
 
     /**
      * @ORM\Version @ORM\Column(type="integer")
@@ -68,26 +73,26 @@ class Url
         return $this->id;
     }
 
-    public function getShortUri(): ?string
+    public function getShortUri(): string
     {
-        return $this->short_uri;
+        return $this->shortUri;
     }
 
-    public function setShortUri(string $short_uri): self
+    public function setShortUri(string $shortUri): self
     {
-        $this->short_uri = $short_uri;
+        $this->shortUri = $shortUri;
 
         return $this;
     }
 
-    public function getOrigUrl(): ?string
+    public function getOrigUrl(): string
     {
-        return $this->orig_url;
+        return $this->origUrl;
     }
 
-    public function setOrigUrl(string $orig_url): self
+    public function setOrigUrl(string $origUrl): self
     {
-        $this->orig_url = $orig_url;
+        $this->origUrl = $origUrl;
 
         return $this;
     }
